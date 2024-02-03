@@ -4,9 +4,8 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import project.goodreads.models.Book;
 import project.goodreads.processors.SearchProcessor;
-import project.goodreads.repositories.BookRepository;
+import project.goodreads.repositories.CustomQueryRepository;
 
 import java.util.regex.*;
 import java.util.List;
@@ -14,28 +13,29 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class SearchService {
+public class SearchService<T> {
 
-    private final BookRepository bookRepository;
+    private final CustomQueryRepository<T> customQueryRepository;
 
-    public List<Book> getBooks(String searchString) {
+    public List<T> getItems(String searchString, Class<T> resultType) {
         if (searchString == null || searchString.length() == 0) {
-            return bookRepository.findAll();
+            return customQueryRepository.findAll(resultType);
         }
 
-        return bookRepository.findWithCustomQuery(toJpaQuery(searchString));
+        return customQueryRepository.findWithCustomQuery(toJpaQuery(searchString, resultType), resultType);
     }
 
-    private String toJpaQuery(String searchString) {
-        var searchProcessor = new SearchProcessor();
+    private String toJpaQuery(String searchString, Class<T> resultType) {
 
+        var searchProcessor = new SearchProcessor();
         Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
+
         Matcher matcher = pattern.matcher(searchString + ",");
         while (matcher.find()) {
             searchProcessor.build(matcher.group(1), matcher.group(2), matcher.group(3));
         }
 
-        return "SELECT b FROM Book b WHERE " + searchProcessor.getJpaQuery();
+        return "SELECT t FROM " + resultType.getSimpleName() + " t WHERE " + searchProcessor.getJpaQuery();
     }
 
 }

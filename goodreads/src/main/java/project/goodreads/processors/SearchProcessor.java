@@ -17,7 +17,7 @@ public class SearchProcessor {
     }
 
     private String toKeyQuery(String key) {
-        return "LOWER(b." + key + ")";
+        return "LOWER(t." + key + ")";
     }
 
     private String toOperationQuery(String operation) {

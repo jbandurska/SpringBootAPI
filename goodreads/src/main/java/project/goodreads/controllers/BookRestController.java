@@ -32,12 +32,12 @@ public class BookRestController {
 
     private final BookRepository bookRepository;
     private final BookService bookService;
-    private final SearchService searchService;
+    private final SearchService<Book> searchService;
 
     @GetMapping
     public List<BookWithIdDto> getAll(@RequestParam(required = false) String search) {
 
-        List<Book> books = searchService.getBooks(search);
+        List<Book> books = searchService.getItems(search, Book.class);
         List<BookWithIdDto> booksDtos = books.stream().map(b -> Book.toBookWithIdDto(b)).toList();
 
         return booksDtos;
