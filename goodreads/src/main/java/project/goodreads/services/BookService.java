@@ -1,7 +1,6 @@
 package project.goodreads.services;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -36,12 +35,8 @@ public class BookService {
         return book;
     }
 
-    public void getAllBooks(Map<String, String> allRequestParams) {
-        System.out.println(allRequestParams);
-
-        for (Map.Entry<String, String> entry : allRequestParams.entrySet()) {
-            System.out.println(entry.getKey() + ":" + entry.getValue());
-        }
+    public void getAllBooks(String search) {
+        System.out.println(search);
     }
 
     public void deleteBook(Long id) {

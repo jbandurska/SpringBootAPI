@@ -17,10 +17,11 @@ import project.goodreads.dto.BookWithIdDto;
 import project.goodreads.models.Book;
 import project.goodreads.repositories.BookRepository;
 import project.goodreads.services.BookService;
+import project.goodreads.services.SearchService;
+
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
-import java.util.Map;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
@@ -31,13 +32,12 @@ public class BookRestController {
 
     private final BookRepository bookRepository;
     private final BookService bookService;
+    private final SearchService searchService;
 
     @GetMapping
-    public List<BookWithIdDto> getAll(@RequestParam Map<String, String> allRequestParams) {
+    public List<BookWithIdDto> getAll(@RequestParam(required = false) String search) {
 
-        bookService.getAllBooks(allRequestParams);
-
-        List<Book> books = bookRepository.findAll();
+        List<Book> books = searchService.getBooks(search);
         List<BookWithIdDto> booksDtos = books.stream().map(b -> Book.toBookWithIdDto(b)).toList();
 
         return booksDtos;
