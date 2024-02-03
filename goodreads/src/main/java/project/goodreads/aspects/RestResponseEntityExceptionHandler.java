@@ -1,5 +1,6 @@
 package project.goodreads.aspects;
 
+import org.hibernate.query.sqm.PathElementException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -26,6 +27,15 @@ public class RestResponseEntityExceptionHandler
     @ExceptionHandler(value = NullException.class)
     protected ResponseEntity<Object> handleNullException(
             NullException ex, WebRequest request) {
+
+        return handleExceptionInternal(ex, ex.getMessage(),
+                new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @SuppressWarnings("null")
+    @ExceptionHandler(value = PathElementException.class)
+    protected ResponseEntity<Object> handlePathElementException(
+            PathElementException ex, WebRequest request) {
 
         return handleExceptionInternal(ex, ex.getMessage(),
                 new HttpHeaders(), HttpStatus.BAD_REQUEST, request);

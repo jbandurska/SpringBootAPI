@@ -1,7 +1,5 @@
 package project.goodreads.services;
 
-import org.springframework.stereotype.Service;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import project.goodreads.processors.SearchProcessor;
@@ -10,7 +8,6 @@ import project.goodreads.repositories.CustomQueryRepository;
 import java.util.regex.*;
 import java.util.List;
 
-@Service
 @Transactional
 @RequiredArgsConstructor
 public class SearchService<T> {

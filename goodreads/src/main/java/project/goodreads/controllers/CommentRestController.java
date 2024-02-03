@@ -10,30 +10,35 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import project.goodreads.dto.CommentDto;
 import project.goodreads.dto.CommentWithIdDto;
 import project.goodreads.models.Comment;
 import project.goodreads.repositories.CommentRepository;
 import project.goodreads.services.CommentService;
+import project.goodreads.services.SearchService;
 
 @RestController
 @RequestMapping("/api/comments")
-@RequiredArgsConstructor
 @Transactional
 public class CommentRestController {
 
-    private final CommentRepository commentRepository;
     private final CommentService commentService;
+    private final SearchService<Comment> searchService;
+
+    public CommentRestController(CommentRepository commentRepository, CommentService commentService) {
+        this.commentService = commentService;
+        this.searchService = new SearchService<>(commentRepository);
+    }
 
     @GetMapping
-    public List<CommentWithIdDto> getAll() {
+    public List<CommentWithIdDto> getAll(@RequestParam(required = false) String search) {
 
-        List<Comment> comments = commentRepository.findAll();
+        List<Comment> comments = searchService.getItems(search, Comment.class);
         List<CommentWithIdDto> commentsDtos = comments.stream().map(c -> Comment.toCommentWithIdDto(c)).toList();
 
         return commentsDtos;

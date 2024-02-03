@@ -8,32 +8,37 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import project.goodreads.dto.UserDto;
 import project.goodreads.dto.UserWithIdDto;
 import project.goodreads.models.User;
 import project.goodreads.repositories.UserRepository;
+import project.goodreads.services.SearchService;
 import project.goodreads.services.UserService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-@RequiredArgsConstructor
 @Transactional
 public class UserRestController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
+    private final SearchService<User> searchService;
+
+    public UserRestController(UserRepository userRepository, UserService userService) {
+        this.userService = userService;
+        this.searchService = new SearchService<>(userRepository);
+    }
 
     @GetMapping
-    public List<UserWithIdDto> getAll() {
+    public List<UserWithIdDto> getAll(@RequestParam(required = false) String search) {
 
-        List<User> users = userRepository.findAll();
+        List<User> users = searchService.getItems(search, User.class);
         List<UserWithIdDto> userDtos = users.stream().map(u -> User.toUserWithIdDto(u)).toList();
 
         return userDtos;

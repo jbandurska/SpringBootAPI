@@ -5,11 +5,10 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import jakarta.transaction.Transactional;
 import project.goodreads.models.Rating;
 
-@Transactional
-public interface RatingRepository extends JpaRepository<Rating, Long> {
+public interface RatingRepository
+        extends JpaRepository<Rating, Long>, CustomQueryRepository<Rating> {
 
     @Query("SELECT ROUND(AVG(r.stars), 2) FROM Rating r WHERE r.book.id = :bookId")
     Double getAverageRatingByBookId(@Param("bookId") Long bookId);

@@ -8,32 +8,39 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import project.goodreads.dto.RatingDto;
 import project.goodreads.dto.RatingWithIdDto;
 import project.goodreads.models.Rating;
 import project.goodreads.repositories.RatingRepository;
 import project.goodreads.services.RatingService;
+import project.goodreads.services.SearchService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/ratings")
-@RequiredArgsConstructor
 @Transactional
 public class RatingRestController {
 
     private final RatingRepository ratingRepository;
     private final RatingService ratingService;
+    private final SearchService<Rating> searchService;
+
+    public RatingRestController(RatingRepository ratingRepository, RatingService ratingService) {
+        this.ratingRepository = ratingRepository;
+        this.ratingService = ratingService;
+        this.searchService = new SearchService<>(ratingRepository);
+    }
 
     @GetMapping
-    public List<RatingWithIdDto> getAll() {
+    public List<RatingWithIdDto> getAll(@RequestParam(required = false) String search) {
 
-        List<Rating> ratings = ratingRepository.findAll();
+        List<Rating> ratings = searchService.getItems(search, Rating.class);
         List<RatingWithIdDto> ratingDtos = ratings.stream().map(r -> Rating.toRatingWithIdDto(r)).toList();
 
         return ratingDtos;

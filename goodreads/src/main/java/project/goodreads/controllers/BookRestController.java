@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import project.goodreads.dto.BookDto;
 import project.goodreads.dto.BookWithIdDto;
 import project.goodreads.models.Book;
@@ -26,13 +25,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/books")
-@RequiredArgsConstructor
 @Transactional
 public class BookRestController {
 
     private final BookRepository bookRepository;
     private final BookService bookService;
     private final SearchService<Book> searchService;
+
+    public BookRestController(BookRepository bookRepository, BookService bookService) {
+        this.bookRepository = bookRepository;
+        this.bookService = bookService;
+        this.searchService = new SearchService<>(bookRepository);
+    }
 
     @GetMapping
     public List<BookWithIdDto> getAll(@RequestParam(required = false) String search) {

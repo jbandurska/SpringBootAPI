@@ -1,16 +1,17 @@
 package project.goodreads.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import project.goodreads.dto.BookshelfDto;
 import project.goodreads.dto.BookshelfWithIdDto;
 import project.goodreads.models.Bookshelf;
 import project.goodreads.repositories.BookshelfRepository;
 import project.goodreads.services.BookshelfService;
+import project.goodreads.services.SearchService;
 import project.goodreads.services.UserService;
 
 import java.util.stream.Collectors;
@@ -27,19 +28,26 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/bookshelves")
-@RequiredArgsConstructor
 @Transactional
 public class BookshelfRestController {
 
     private final BookshelfService bookshelfService;
     private final BookshelfRepository bookshelfRepository;
     private final UserService userService;
+    private final SearchService<Bookshelf> searchService;
+
+    public BookshelfRestController(BookshelfService bookshelfService, BookshelfRepository bookshelfRepository,
+            UserService userService) {
+        this.bookshelfService = bookshelfService;
+        this.bookshelfRepository = bookshelfRepository;
+        this.userService = userService;
+        this.searchService = new SearchService<>(bookshelfRepository);
+    }
 
     @GetMapping
-    public ResponseEntity<List<BookshelfWithIdDto>> getAllBookshelves() {
+    public ResponseEntity<List<BookshelfWithIdDto>> getAll(@RequestParam(required = false) String search) {
 
-        List<Bookshelf> bookshelves = bookshelfRepository.findAll();
-
+        List<Bookshelf> bookshelves = searchService.getItems(search, Bookshelf.class);
         List<BookshelfWithIdDto> bookshelfDtos = bookshelves.stream()
                 .map(bookshelf -> Bookshelf.toBookshelfWithIdDto(bookshelf))
                 .collect(Collectors.toList());

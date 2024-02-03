@@ -9,7 +9,8 @@ import org.springframework.data.repository.query.Param;
 
 import project.goodreads.models.Bookshelf;
 
-public interface BookshelfRepository extends JpaRepository<Bookshelf, Long> {
+public interface BookshelfRepository
+        extends JpaRepository<Bookshelf, Long>, CustomQueryRepository<Bookshelf> {
 
     @Query("SELECT b FROM Bookshelf b WHERE b.user.id = :userId")
     Set<Bookshelf> findAllBookshelvesByUserId(@Param("userId") Long userId);

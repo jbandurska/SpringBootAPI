@@ -7,11 +7,10 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import jakarta.transaction.Transactional;
 import project.goodreads.models.Comment;
 
-@Transactional
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+public interface CommentRepository
+        extends JpaRepository<Comment, Long>, CustomQueryRepository<Comment> {
 
     @Query("SELECT c FROM Comment c WHERE c.book.id = :bookId")
     public Set<Comment> findAllByBookId(@Param("bookId") Long bookId);
