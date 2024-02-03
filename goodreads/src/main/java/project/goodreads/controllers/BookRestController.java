@@ -61,6 +61,7 @@ public class BookRestController {
         var book = new Book();
         book.setTitle(bookDto.getTitle());
         book.setAuthor(bookDto.getAuthor());
+        book.setYearOfRelease(bookDto.getYearOfRelease());
         var createdBook = bookRepository.save(book);
 
         return ResponseEntity.status(201).body(Book.toBookWithIdDto(createdBook));
@@ -72,6 +73,7 @@ public class BookRestController {
         var book = bookService.getBook(id);
         book.setTitle(bookDto.getTitle());
         book.setAuthor(bookDto.getAuthor());
+        book.setYearOfRelease(bookDto.getYearOfRelease());
         bookRepository.save(book);
 
         return ResponseEntity.ok(Book.toBookWithIdDto(book));

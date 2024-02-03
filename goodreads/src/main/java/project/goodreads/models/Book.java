@@ -24,6 +24,7 @@ public class Book {
 
     private String title;
     private String author;
+    private int yearOfRelease;
 
     @ManyToMany(mappedBy = "books", fetch = FetchType.LAZY)
     private Set<Bookshelf> onShelf = new HashSet<>();
@@ -34,6 +35,7 @@ public class Book {
         bookDto.setId(book.getId());
         bookDto.setTitle(book.getTitle());
         bookDto.setAuthor(book.getAuthor());
+        bookDto.setYearOfRelease(book.getYearOfRelease());
 
         return bookDto;
     }

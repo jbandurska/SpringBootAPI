@@ -1,11 +1,13 @@
 package project.goodreads.processors;
 
 import lombok.Data;
+import java.util.*;
 
 @Data
 public class SearchProcessor {
 
     private String jpaQuery = "";
+    private final List<String> nonStringFields = List.of("yearOfRelease");
 
     public void build(String key, String operation, String value) {
         System.out.println(key + " " + operation + " " + value);
@@ -13,21 +15,32 @@ public class SearchProcessor {
             jpaQuery += " AND ";
         }
 
-        jpaQuery += toKeyQuery(key) + " " + toOperationQuery(operation) + " " + toValueQuery(value);
+        var nonString = nonStringFields.contains(key);
+        jpaQuery += toKeyQuery(key, nonString) + " " + toOperationQuery(operation, nonString) + " "
+                + toValueQuery(value, nonString);
     }
 
-    private String toKeyQuery(String key) {
+    private String toKeyQuery(String key, boolean nonString) {
+        if (nonString)
+            return key;
+
         return "LOWER(t." + key + ")";
     }
 
-    private String toOperationQuery(String operation) {
-        return "LIKE";
+    private String toOperationQuery(String operation, boolean nonString) {
+        if (operation.equals(":") && nonString)
+            return "=";
+
+        if (operation.equals(":"))
+            return "LIKE";
+
+        return operation;
     }
 
-    private String toValueQuery(String value) {
+    private String toValueQuery(String value, boolean nonString) {
+        if (nonString)
+            return value;
+
         return "LOWER('%" + value + "%')";
     }
 }
-
-// @Query("SELECT b FROM Book b WHERE LOWER(b.title) LIKE LOWER(CONCAT('%',
-// :key, '%')) OR LOWER(b.author) LIKE LOWER(CONCAT('%', :key, '%'))")
