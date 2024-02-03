@@ -1,6 +1,5 @@
-package project.goodreads.controllers.rest;
+package project.goodreads.controllers;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +17,7 @@ import project.goodreads.dto.RatingDto;
 import project.goodreads.dto.RatingWithIdDto;
 import project.goodreads.models.Rating;
 import project.goodreads.repositories.RatingRepository;
-import project.goodreads.services.ReviewService;
+import project.goodreads.services.RatingService;
 
 import java.util.List;
 
@@ -29,19 +28,13 @@ import java.util.List;
 public class RatingRestController {
 
     private final RatingRepository ratingRepository;
-    private final ReviewService reviewService;
+    private final RatingService ratingService;
 
     @GetMapping
     public List<RatingWithIdDto> getAll() {
 
         List<Rating> ratings = ratingRepository.findAll();
-        List<RatingWithIdDto> ratingDtos = ratings.stream().map(r -> {
-
-            var ratingDto = new RatingWithIdDto();
-            BeanUtils.copyProperties(r, ratingDto);
-
-            return ratingDto;
-        }).toList();
+        List<RatingWithIdDto> ratingDtos = ratings.stream().map(r -> Rating.toRatingWithIdDto(r)).toList();
 
         return ratingDtos;
     }
@@ -49,44 +42,34 @@ public class RatingRestController {
     @GetMapping("/{id}")
     public RatingWithIdDto getOne(@PathVariable Long id) {
 
-        var rating = reviewService.getRating(id);
+        var rating = ratingService.getRating(id);
 
-        var ratingDto = new RatingWithIdDto();
-        BeanUtils.copyProperties(rating, ratingDto);
-
-        return ratingDto;
+        return Rating.toRatingWithIdDto(rating);
     }
 
     @PostMapping
     public ResponseEntity<RatingWithIdDto> createRating(@Valid @RequestBody RatingDto ratingDto) {
 
-        var rating = reviewService.addRating(ratingDto.getStars(), ratingDto.getBookId(), ratingDto.getUserId());
+        var rating = ratingService.addRating(ratingDto.getStars(), ratingDto.getBookId(), ratingDto.getUserId());
 
-        var response = new RatingWithIdDto();
-        BeanUtils.copyProperties(rating, response);
-
-        return ResponseEntity.status(201).body(response);
+        return ResponseEntity.status(201).body(Rating.toRatingWithIdDto(rating));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<RatingWithIdDto> updateRating(@PathVariable Long id,
             @Valid @RequestBody RatingDto ratingDto) {
 
-        var rating = reviewService.getRating(id);
-        rating.setStars(ratingDto.getStars());
-        rating.setBookId(ratingDto.getBookId());
-        rating.setUserId(ratingDto.getUserId());
+        var rating = ratingService.getRating(id);
+        ratingService.updateRating(rating, ratingDto.getStars(), ratingDto.getBookId(), ratingDto.getUserId());
 
-        var response = new RatingWithIdDto();
-        BeanUtils.copyProperties(rating, response);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(Rating.toRatingWithIdDto(rating));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRating(@PathVariable Long id) {
 
-        ratingRepository.deleteById(id);
+        if (id != null)
+            ratingRepository.deleteById(id);
 
         return ResponseEntity.noContent().build();
     }

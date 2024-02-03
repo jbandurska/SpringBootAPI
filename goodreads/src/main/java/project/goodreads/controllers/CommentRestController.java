@@ -1,8 +1,7 @@
-package project.goodreads.controllers.rest;
+package project.goodreads.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +19,7 @@ import project.goodreads.dto.CommentDto;
 import project.goodreads.dto.CommentWithIdDto;
 import project.goodreads.models.Comment;
 import project.goodreads.repositories.CommentRepository;
-import project.goodreads.services.ReviewService;
+import project.goodreads.services.CommentService;
 
 @RestController
 @RequestMapping("/api/comments")
@@ -29,19 +28,13 @@ import project.goodreads.services.ReviewService;
 public class CommentRestController {
 
     private final CommentRepository commentRepository;
-    private final ReviewService reviewService;
+    private final CommentService commentService;
 
     @GetMapping
     public List<CommentWithIdDto> getAll() {
 
         List<Comment> comments = commentRepository.findAll();
-        List<CommentWithIdDto> commentsDtos = comments.stream().map(c -> {
-
-            var cDto = new CommentWithIdDto();
-            BeanUtils.copyProperties(c, cDto);
-
-            return cDto;
-        }).toList();
+        List<CommentWithIdDto> commentsDtos = comments.stream().map(c -> Comment.toCommentWithIdDto(c)).toList();
 
         return commentsDtos;
     }
@@ -49,45 +42,34 @@ public class CommentRestController {
     @GetMapping("/{id}")
     public CommentWithIdDto getOne(@PathVariable Long id) {
 
-        var comment = reviewService.getComment(id);
+        var comment = commentService.getComment(id);
 
-        var commentDto = new CommentWithIdDto();
-        BeanUtils.copyProperties(comment, commentDto);
-
-        return commentDto;
+        return Comment.toCommentWithIdDto(comment);
     }
 
     @PostMapping
     public ResponseEntity<CommentWithIdDto> createComment(@Valid @RequestBody CommentDto commentDto) {
 
-        var comment = reviewService.addComment(commentDto.getContent(), commentDto.getBookId(),
-                commentDto.getUsername());
+        var comment = commentService.addComment(commentDto.getContent(), commentDto.getBookId(),
+                commentDto.getUserId());
 
-        var response = new CommentWithIdDto();
-        BeanUtils.copyProperties(comment, response);
-
-        return ResponseEntity.status(201).body(response);
+        return ResponseEntity.status(201).body(Comment.toCommentWithIdDto(comment));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CommentWithIdDto> updateComment(@PathVariable Long id,
             @Valid @RequestBody CommentDto commentDto) {
 
-        var comment = reviewService.getComment(id);
-        comment.setContent(commentDto.getContent());
-        comment.setBookId(commentDto.getBookId());
-        comment.setUsername(commentDto.getUsername());
+        var comment = commentService.getComment(id);
+        commentService.updateComment(comment, commentDto.getContent(), commentDto.getBookId(), commentDto.getUserId());
 
-        var response = new CommentWithIdDto();
-        BeanUtils.copyProperties(comment, response);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(Comment.toCommentWithIdDto(comment));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
 
-        commentRepository.deleteById(id);
+        commentService.deleteComment(id);
 
         return ResponseEntity.noContent().build();
     }

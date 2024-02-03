@@ -13,14 +13,14 @@ import project.goodreads.models.Comment;
 @Transactional
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    @Query("SELECT c FROM Comment c WHERE c.bookId = :bookId")
+    @Query("SELECT c FROM Comment c WHERE c.book.id = :bookId")
     public Set<Comment> findAllByBookId(@Param("bookId") Long bookId);
 
-    @Query("DELETE FROM Comment c WHERE c.bookId = :bookId")
+    @Query("DELETE FROM Comment c WHERE c.book.id = :bookId")
     @Modifying
     public void deleteAllByBookId(@Param("bookId") Long bookId);
 
-    @Query("SELECT COUNT(c) FROM Comment c WHERE c.bookId = :bookId")
+    @Query("SELECT COUNT(c) FROM Comment c WHERE c.book.id = :bookId")
     public Long countByBookId(@Param("bookId") Long bookId);
 
 }

@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import project.goodreads.enums.Role;
 
 @Data
 @NoArgsConstructor
@@ -18,12 +17,5 @@ public class UserWithIdDto {
     @NotNull
     @NotEmpty
     private String username;
-
-    @NotNull
-    @NotEmpty
-    private String password;
-
-    @NotNull
-    private Role role;
 
 }

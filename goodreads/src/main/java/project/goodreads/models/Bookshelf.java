@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
+import project.goodreads.dto.BookshelfWithIdDto;
 
 @Entity
 @Getter
@@ -30,10 +31,18 @@ public class Bookshelf {
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
-    private boolean isHidden;
-
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "book_bookshelf", joinColumns = @JoinColumn(name = "bookshelf_id"), inverseJoinColumns = @JoinColumn(name = "book_id"))
     private Set<Book> books = new HashSet<>();
+
+    public static BookshelfWithIdDto toBookshelfWithIdDto(Bookshelf bookshelf) {
+        var bookshelfDto = new BookshelfWithIdDto();
+
+        bookshelfDto.setId(bookshelf.getId());
+        bookshelfDto.setName(bookshelf.getName());
+        bookshelfDto.setUserId(bookshelf.getUser().getId());
+
+        return bookshelfDto;
+    }
 
 }

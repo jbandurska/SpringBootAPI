@@ -9,10 +9,13 @@ import jakarta.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateBookshelfDto {
+public class BookshelfDto {
 
     @NotNull
     @NotEmpty
     private String name;
+
+    @NotNull
+    private Long userId;
 
 }

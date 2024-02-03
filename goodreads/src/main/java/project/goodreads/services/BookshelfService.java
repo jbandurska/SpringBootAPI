@@ -1,6 +1,5 @@
 package project.goodreads.services;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +7,7 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import project.goodreads.exceptions.NullException;
 import project.goodreads.models.Book;
 import project.goodreads.models.Bookshelf;
 import project.goodreads.models.User;
@@ -23,15 +23,10 @@ public class BookshelfService {
     final BookRepository bookRepository;
 
     public Bookshelf createBookshelf(String name, User user) {
-        return createBookshelf(name, user, false);
-    }
-
-    public Bookshelf createBookshelf(String name, User user, boolean isHidden) {
         Bookshelf bookshelf = new Bookshelf();
 
         bookshelf.setName(name);
         bookshelf.setUser(user);
-        bookshelf.setHidden(isHidden);
 
         bookshelfRepository.save(bookshelf);
 
@@ -39,6 +34,11 @@ public class BookshelfService {
     }
 
     public void addBookToBookshelf(Long bookshelfId, Long bookId) {
+        if (bookshelfId == null)
+            throw new NullException("Bookshelf id cannot be null");
+        if (bookId == null)
+            throw new NullException("Book id cannot be null");
+
         Bookshelf bookshelf = bookshelfRepository.findById(bookshelfId)
                 .orElseThrow(() -> new EntityNotFoundException("Bookshelf with id " + bookshelfId + " not found."));
 
@@ -50,6 +50,11 @@ public class BookshelfService {
     }
 
     public void deleteBookFromBookshelf(Long bookshelfId, Long bookId) {
+        if (bookshelfId == null)
+            throw new NullException("Bookshelf id cannot be null");
+        if (bookId == null)
+            throw new NullException("Book id cannot be null");
+
         Bookshelf bookshelf = bookshelfRepository.findById(bookshelfId)
                 .orElseThrow(() -> new EntityNotFoundException("Bookshelf with id " + bookshelfId + " not found."));
 
@@ -65,28 +70,9 @@ public class BookshelfService {
         return bookshelfRepository.findAllBookshelvesByUserId(userId);
     }
 
-    public Set<Bookshelf> getBookshelvesWithoutBook(Long userId, Long bookId) {
-        var bookshelves = bookshelfRepository.findAllBookshelvesByUserId(userId);
-
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new EntityNotFoundException("Book with id " + bookId + " not found."));
-
-        var bookshelvesWithoutBook = new HashSet<Bookshelf>();
-
-        for (Bookshelf bookshelf : bookshelves) {
-            if (!isBookOnShelf(bookshelf, book))
-                bookshelvesWithoutBook.add(bookshelf);
-        }
-
-        return bookshelvesWithoutBook;
-    }
-
-    private boolean isBookOnShelf(Bookshelf bookshelf, Book book) {
-
-        return bookshelf.getBooks().contains(book);
-    }
-
-    public Bookshelf getBookshelfById(Long bookshelfId) {
+    public Bookshelf getBookshelf(Long bookshelfId) {
+        if (bookshelfId == null)
+            throw new NullException("Bookshelf id cannot be null");
 
         return bookshelfRepository.findById(bookshelfId)
                 .orElseThrow(() -> new EntityNotFoundException("Bookshelf with id " + bookshelfId + " not found."));

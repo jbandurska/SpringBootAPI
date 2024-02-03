@@ -1,14 +1,15 @@
 package project.goodreads.services;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import project.goodreads.exceptions.NullException;
 import project.goodreads.models.Book;
 import project.goodreads.models.Bookshelf;
 import project.goodreads.repositories.BookRepository;
@@ -26,20 +27,32 @@ public class BookService {
     private final RatingRepository ratingRepository;
     private final CommentRepository commentRepository;
 
-    public Book getBook(Long bookId) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new EntityNotFoundException("Book not found"));
+    public Book getBook(Long id) {
+        if (id == null)
+            throw new NullException("Book id cannot be null");
+
+        Book book = bookRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Book not found"));
 
         return book;
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public void deleteBook(Long bookId) {
+    public void getAllBooks(Map<String, String> allRequestParams) {
+        System.out.println(allRequestParams);
 
-        deleteRatingsAboutBook(bookId);
-        deleteCommentsAboutBook(bookId);
-        deleteBookFromBookshelves(bookId);
+        for (Map.Entry<String, String> entry : allRequestParams.entrySet()) {
+            System.out.println(entry.getKey() + ":" + entry.getValue());
+        }
+    }
 
-        bookRepository.deleteById(bookId);
+    public void deleteBook(Long id) {
+        if (id == null)
+            throw new NullException("Book id cannot be null");
+
+        deleteRatingsAboutBook(id);
+        deleteCommentsAboutBook(id);
+        deleteBookFromBookshelves(id);
+
+        bookRepository.deleteById(id);
     }
 
     public void deleteRatingsAboutBook(Long bookId) {
@@ -50,6 +63,7 @@ public class BookService {
         commentRepository.deleteAllByBookId(bookId);
     }
 
+    @SuppressWarnings("null")
     public void deleteBookFromBookshelves(Long bookId) {
         var book = getBook(bookId);
 

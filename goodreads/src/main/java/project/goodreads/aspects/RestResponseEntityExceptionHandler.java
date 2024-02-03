@@ -15,11 +15,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.persistence.EntityNotFoundException;
+import project.goodreads.exceptions.NullException;
+import project.goodreads.exceptions.UserAlreadyExistException;
 
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler
         extends ResponseEntityExceptionHandler {
 
+    @SuppressWarnings("null")
+    @ExceptionHandler(value = NullException.class)
+    protected ResponseEntity<Object> handleNullException(
+            NullException ex, WebRequest request) {
+
+        return handleExceptionInternal(ex, ex.getMessage(),
+                new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @SuppressWarnings("null")
+    @ExceptionHandler(value = UserAlreadyExistException.class)
+    protected ResponseEntity<Object> handleUserAlreadyExistException(
+            UserAlreadyExistException ex, WebRequest request) {
+
+        return handleExceptionInternal(ex, ex.getMessage(),
+                new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
+
+    @SuppressWarnings("null")
     @ExceptionHandler(value = EntityNotFoundException.class)
     protected ResponseEntity<Object> handleNotFound(
             EntityNotFoundException ex, WebRequest request) {
@@ -28,6 +49,7 @@ public class RestResponseEntityExceptionHandler
                 new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
+    @SuppressWarnings("null")
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {

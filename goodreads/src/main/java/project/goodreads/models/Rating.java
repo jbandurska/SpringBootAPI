@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
+import project.goodreads.dto.RatingWithIdDto;
 
 @Entity
 @Data
@@ -17,9 +18,22 @@ public class Rating {
     private Long id;
 
     private Double stars;
-    private Long bookId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Book book;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
+
+    public static RatingWithIdDto toRatingWithIdDto(Rating rating) {
+        var ratingDto = new RatingWithIdDto();
+
+        ratingDto.setId(rating.getId());
+        ratingDto.setStars(rating.getStars());
+        ratingDto.setBookId(rating.getBook().getId());
+        ratingDto.setUserId(rating.getUser().getId());
+
+        return ratingDto;
+    }
 
 }

@@ -1,6 +1,5 @@
-package project.goodreads.controllers.rest;
+package project.goodreads.controllers;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +20,8 @@ import project.goodreads.services.BookService;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
+import java.util.Map;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/books")
@@ -32,16 +33,12 @@ public class BookRestController {
     private final BookService bookService;
 
     @GetMapping
-    public List<BookWithIdDto> getAll() {
+    public List<BookWithIdDto> getAll(@RequestParam Map<String, String> allRequestParams) {
+
+        bookService.getAllBooks(allRequestParams);
 
         List<Book> books = bookRepository.findAll();
-        List<BookWithIdDto> booksDtos = books.stream().map(b -> {
-
-            var bookDto = new BookWithIdDto();
-            BeanUtils.copyProperties(b, bookDto);
-
-            return bookDto;
-        }).toList();
+        List<BookWithIdDto> booksDtos = books.stream().map(b -> Book.toBookWithIdDto(b)).toList();
 
         return booksDtos;
     }
@@ -51,10 +48,7 @@ public class BookRestController {
 
         var book = bookService.getBook(id);
 
-        var bookDto = new BookWithIdDto();
-        BeanUtils.copyProperties(book, bookDto);
-
-        return bookDto;
+        return Book.toBookWithIdDto(book);
     }
 
     @PostMapping
@@ -65,10 +59,7 @@ public class BookRestController {
         book.setAuthor(bookDto.getAuthor());
         var createdBook = bookRepository.save(book);
 
-        var response = new BookWithIdDto();
-        BeanUtils.copyProperties(createdBook, response);
-
-        return ResponseEntity.status(201).body(response);
+        return ResponseEntity.status(201).body(Book.toBookWithIdDto(createdBook));
     }
 
     @PutMapping("/{id}")
@@ -79,10 +70,7 @@ public class BookRestController {
         book.setAuthor(bookDto.getAuthor());
         bookRepository.save(book);
 
-        var response = new BookWithIdDto();
-        BeanUtils.copyProperties(book, response);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(Book.toBookWithIdDto(book));
     }
 
     @DeleteMapping("/{id}")

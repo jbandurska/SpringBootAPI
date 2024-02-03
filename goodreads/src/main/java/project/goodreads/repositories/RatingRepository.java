@@ -11,14 +11,14 @@ import project.goodreads.models.Rating;
 @Transactional
 public interface RatingRepository extends JpaRepository<Rating, Long> {
 
-    @Query("SELECT ROUND(AVG(r.stars), 2) FROM Rating r WHERE r.bookId = :bookId")
+    @Query("SELECT ROUND(AVG(r.stars), 2) FROM Rating r WHERE r.book.id = :bookId")
     Double getAverageRatingByBookId(@Param("bookId") Long bookId);
 
-    @Query("DELETE FROM Rating r WHERE r.bookId = :bookId")
+    @Query("DELETE FROM Rating r WHERE r.book.id = :bookId")
     @Modifying
     public void deleteAllByBookId(@Param("bookId") Long bookId);
 
-    @Query("SELECT COUNT(r) FROM Rating r WHERE r.bookId = :bookId")
+    @Query("SELECT COUNT(r) FROM Rating r WHERE r.book.id = :bookId")
     public Long countByBookId(@Param("bookId") Long bookId);
 
 }
