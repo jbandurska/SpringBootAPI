@@ -3,6 +3,7 @@ package project.goodreads.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -13,6 +14,7 @@ public class BookshelfDto {
 
     @NotNull
     @NotEmpty
+    @NotBlank
     private String name;
 
     @NotNull
