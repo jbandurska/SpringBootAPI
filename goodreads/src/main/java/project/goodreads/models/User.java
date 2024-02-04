@@ -30,6 +30,8 @@ public class User {
     @Column(unique = true)
     private String username;
 
+    private boolean adult;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Bookshelf> bookshelves;
 
@@ -44,6 +46,7 @@ public class User {
 
         userDto.setId(user.getId());
         userDto.setUsername(user.getUsername());
+        userDto.setAdult(user.isAdult());
 
         return userDto;
     }

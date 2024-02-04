@@ -15,4 +15,7 @@ public class UserDto {
     @NotEmpty
     private String username;
 
+    @NotNull
+    private boolean adult;
+
 }

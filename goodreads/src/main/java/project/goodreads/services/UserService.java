@@ -29,7 +29,7 @@ public class UserService {
         return user;
     }
 
-    public User createUser(String username) {
+    public User createUser(String username, boolean adult) {
 
         if (usernameExist(username)) {
             throw new UserAlreadyExistException("User with this username already exists: " + username);
@@ -37,6 +37,7 @@ public class UserService {
 
         User user = new User();
         user.setUsername(username);
+        user.setAdult(adult);
 
         User savedUser = userRepository.save(user);
 
@@ -51,11 +52,12 @@ public class UserService {
         return userRepository.findByUsername(username).isPresent();
     }
 
-    @SuppressWarnings("null")
-    public User updateUser(User user, String username) {
+    public User updateUser(User user, String username, boolean adult) {
 
         if (username != null && !username.isEmpty())
             user.setUsername(username);
+
+        user.setAdult(adult);
 
         userRepository.save(user);
 

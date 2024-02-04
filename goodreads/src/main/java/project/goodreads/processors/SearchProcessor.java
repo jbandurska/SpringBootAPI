@@ -7,7 +7,7 @@ import java.util.*;
 public class SearchProcessor {
 
     private String jpaQuery = "";
-    private final List<String> nonStringFields = List.of("yearOfRelease");
+    private final List<String> nonStringFields = List.of("yearOfRelease", "adult");
 
     public void build(String key, String operation, String value) {
         System.out.println(key + " " + operation + " " + value);

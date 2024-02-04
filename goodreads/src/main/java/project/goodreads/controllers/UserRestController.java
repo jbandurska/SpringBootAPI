@@ -59,7 +59,7 @@ public class UserRestController {
     @PostMapping
     public ResponseEntity<UserWithIdDto> createUser(@Valid @RequestBody UserDto userDto) {
 
-        var user = userService.createUser(userDto.getUsername());
+        var user = userService.createUser(userDto.getUsername(), userDto.isAdult());
 
         return ResponseEntity.status(201).body(User.toUserWithIdDto(user));
     }
@@ -67,7 +67,7 @@ public class UserRestController {
     @PutMapping("/{id}")
     public ResponseEntity<UserWithIdDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserDto userDto) {
 
-        var user = userService.updateUser(userService.getUser(id), userDto.getUsername());
+        var user = userService.updateUser(userService.getUser(id), userDto.getUsername(), userDto.isAdult());
 
         return ResponseEntity.ok(User.toUserWithIdDto(user));
     }

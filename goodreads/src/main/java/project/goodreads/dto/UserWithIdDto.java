@@ -18,4 +18,7 @@ public class UserWithIdDto {
     @NotEmpty
     private String username;
 
+    @NotNull
+    private boolean adult;
+
 }
