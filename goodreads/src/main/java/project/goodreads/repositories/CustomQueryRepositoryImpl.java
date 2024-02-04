@@ -2,8 +2,11 @@ package project.goodreads.repositories;
 
 import java.util.*;
 
+import org.springframework.data.domain.PageRequest;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 
 public class CustomQueryRepositoryImpl<T> implements CustomQueryRepository<T> {
 
@@ -11,10 +14,15 @@ public class CustomQueryRepositoryImpl<T> implements CustomQueryRepository<T> {
     private EntityManager entityManager;
 
     @Override
-    public List<T> findWithCustomQuery(String query, Class<T> resultType) {
-        System.out.println("\u001B[32m" + query + "\u001B[0m");
+    public List<T> findWithCustomQuery(String queryString, Class<T> resultType, PageRequest pageRequest) {
+        System.out.println("\u001B[32m" + queryString + "\u001B[0m");
 
-        List<?> list = entityManager.createQuery(query).getResultList();
+        Query query = entityManager.createQuery(queryString);
+
+        query.setFirstResult(pageRequest.getPageNumber() * pageRequest.getPageSize());
+        query.setMaxResults(pageRequest.getPageSize());
+
+        List<?> list = query.getResultList();
         List<T> result = new ArrayList<>();
 
         for (var item : list) {
@@ -29,10 +37,10 @@ public class CustomQueryRepositoryImpl<T> implements CustomQueryRepository<T> {
     }
 
     @Override
-    public List<T> findAll(Class<T> resultType) {
+    public List<T> findAll(Class<T> resultType, PageRequest pageRequest) {
 
         return findWithCustomQuery("SELECT t FROM " + resultType.getSimpleName() + " t",
-                resultType);
+                resultType, pageRequest);
     }
 
 }

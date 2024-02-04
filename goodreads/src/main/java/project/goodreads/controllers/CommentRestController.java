@@ -2,6 +2,7 @@ package project.goodreads.controllers;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import project.goodreads.dto.CommentDto;
 import project.goodreads.dto.CommentWithIdDto;
 import project.goodreads.models.Comment;
@@ -36,9 +38,11 @@ public class CommentRestController {
     }
 
     @GetMapping
-    public List<CommentWithIdDto> getAll(@RequestParam(required = false) String search) {
+    public List<CommentWithIdDto> getAll(@RequestParam(required = false) String search,
+            @Min(0) @RequestParam(defaultValue = "0") int page) {
 
-        List<Comment> comments = searchService.getItems(search, Comment.class);
+        var pageRequest = PageRequest.of(page, 10);
+        List<Comment> comments = searchService.getItems(search, Comment.class, pageRequest);
         List<CommentWithIdDto> commentsDtos = comments.stream().map(c -> Comment.toCommentWithIdDto(c)).toList();
 
         return commentsDtos;

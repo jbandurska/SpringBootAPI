@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import project.goodreads.dto.BookshelfDto;
 import project.goodreads.dto.BookshelfWithIdDto;
 import project.goodreads.models.Bookshelf;
@@ -16,6 +17,7 @@ import project.goodreads.services.UserService;
 
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,9 +47,11 @@ public class BookshelfRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookshelfWithIdDto>> getAll(@RequestParam(required = false) String search) {
+    public ResponseEntity<List<BookshelfWithIdDto>> getAll(@RequestParam(required = false) String search,
+            @Min(0) @RequestParam(defaultValue = "0") int page) {
 
-        List<Bookshelf> bookshelves = searchService.getItems(search, Bookshelf.class);
+        var pageRequest = PageRequest.of(page, 10);
+        List<Bookshelf> bookshelves = searchService.getItems(search, Bookshelf.class, pageRequest);
         List<BookshelfWithIdDto> bookshelfDtos = bookshelves.stream()
                 .map(bookshelf -> Bookshelf.toBookshelfWithIdDto(bookshelf))
                 .collect(Collectors.toList());

@@ -6,6 +6,9 @@ import project.goodreads.processors.SearchProcessor;
 import project.goodreads.repositories.CustomQueryRepository;
 
 import java.util.regex.*;
+
+import org.springframework.data.domain.PageRequest;
+
 import java.util.List;
 
 @Transactional
@@ -14,12 +17,12 @@ public class SearchService<T> {
 
     private final CustomQueryRepository<T> customQueryRepository;
 
-    public List<T> getItems(String searchString, Class<T> resultType) {
+    public List<T> getItems(String searchString, Class<T> resultType, PageRequest pageRequest) {
         if (searchString == null || searchString.length() == 0) {
-            return customQueryRepository.findAll(resultType);
+            return customQueryRepository.findAll(resultType, pageRequest);
         }
 
-        return customQueryRepository.findWithCustomQuery(toJpaQuery(searchString, resultType), resultType);
+        return customQueryRepository.findWithCustomQuery(toJpaQuery(searchString, resultType), resultType, pageRequest);
     }
 
     private String toJpaQuery(String searchString, Class<T> resultType) {

@@ -1,5 +1,6 @@
 package project.goodreads.controllers;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import project.goodreads.dto.RatingDto;
 import project.goodreads.dto.RatingWithIdDto;
 import project.goodreads.models.Rating;
@@ -38,9 +40,11 @@ public class RatingRestController {
     }
 
     @GetMapping
-    public List<RatingWithIdDto> getAll(@RequestParam(required = false) String search) {
+    public List<RatingWithIdDto> getAll(@RequestParam(required = false) String search,
+            @Min(0) @RequestParam(defaultValue = "0") int page) {
 
-        List<Rating> ratings = searchService.getItems(search, Rating.class);
+        var pageRequest = PageRequest.of(page, 10);
+        List<Rating> ratings = searchService.getItems(search, Rating.class, pageRequest);
         List<RatingWithIdDto> ratingDtos = ratings.stream().map(r -> Rating.toRatingWithIdDto(r)).toList();
 
         return ratingDtos;

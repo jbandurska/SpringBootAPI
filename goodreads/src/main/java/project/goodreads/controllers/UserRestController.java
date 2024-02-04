@@ -1,5 +1,6 @@
 package project.goodreads.controllers;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import project.goodreads.dto.UserDto;
 import project.goodreads.dto.UserWithIdDto;
 import project.goodreads.models.User;
@@ -36,9 +38,11 @@ public class UserRestController {
     }
 
     @GetMapping
-    public List<UserWithIdDto> getAll(@RequestParam(required = false) String search) {
+    public List<UserWithIdDto> getAll(@RequestParam(required = false) String search,
+            @Min(0) @RequestParam(defaultValue = "0") int page) {
 
-        List<User> users = searchService.getItems(search, User.class);
+        var pageRequest = PageRequest.of(page, 10);
+        List<User> users = searchService.getItems(search, User.class, pageRequest);
         List<UserWithIdDto> userDtos = users.stream().map(u -> User.toUserWithIdDto(u)).toList();
 
         return userDtos;
