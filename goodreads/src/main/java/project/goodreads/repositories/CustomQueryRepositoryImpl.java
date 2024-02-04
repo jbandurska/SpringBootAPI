@@ -15,7 +15,6 @@ public class CustomQueryRepositoryImpl<T> implements CustomQueryRepository<T> {
 
     @Override
     public List<T> findWithCustomQuery(String queryString, Class<T> resultType, PageRequest pageRequest) {
-        System.out.println("\u001B[32m" + queryString + "\u001B[0m");
 
         Query query = entityManager.createQuery(queryString);
 
