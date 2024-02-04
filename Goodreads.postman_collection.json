@@ -1,0 +1,1684 @@
+{
+	"info": {
+		"_postman_id": "a13f69dc-64c7-4016-8942-c23acddd20fd",
+		"name": "Goodreads",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32759721"
+	},
+	"item": [
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Response array has at least length of 1\", function () {",
+									"    pm.expect(responseJson).to.have.length.at.least(1);",
+									"    pm.collectionVariables.set(\"userId\", responseJson.at(0).id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "userById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Response object id equals id sent in the url\", function () {",
+									"    pm.expect(responseJson.id).to.equal(pm.collectionVariables.get(\"userId\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.expect(pm.response.code).to.equal(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Created resource is the same as sent resource\", function () {",
+									"    pm.expect(responseJson.username).to.equal(JSON.parse(pm.request.body).username);",
+									"    pm.collectionVariables.set(\"newItemId\", responseJson.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"Joel\",\n    \"adult\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "users [400]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.expect(pm.response.code).to.equal(400);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Error message indicates the invalid field\", function () {",
+									"    pm.expect(responseJson.username).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"\",\n    \"adult\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "userById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Updated resource is the same as sent resource\", function () {",
+									"    pm.expect(responseJson.username).to.equal(JSON.parse(pm.request.body).username);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"Ellie\",\n    \"adult\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{newItemId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{newItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "userById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.expect(pm.response.code).to.equal(204);",
+									"});",
+									"",
+									"pm.sendRequest(pm.collectionVariables.get(\"baseUrl\") + \"/users/\" + pm.collectionVariables.get(\"newItemId\"), function (err, response) {",
+									"    pm.test(\"Resource is not found\", function () {",
+									"        pm.expect(response.code).to.equal(404);",
+									"    });",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{newItemId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{newItemId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "books",
+			"item": [
+				{
+					"name": "books",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Response array has at least length of 1\", function () {",
+									"    pm.expect(responseJson).to.have.length.at.least(1);",
+									"    pm.collectionVariables.set(\"bookId\", responseJson.at(0).id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/books",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bookById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Response object id equals id sent in the url\", function () {",
+									"    pm.expect(responseJson.id).to.equal(pm.collectionVariables.get(\"bookId\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/books/{{bookId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"books",
+								"{{bookId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "books",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.expect(pm.response.code).to.equal(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Created resource is the same as sent resource\", function () {",
+									"    pm.expect(responseJson.title).to.equal(JSON.parse(pm.request.body).title);",
+									"    pm.collectionVariables.set(\"newItemId\", responseJson.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"All the Semi Bright Places\",\n    \"author\": \"Jennifer Niwen\",\n    \"yearOfRelease\": 2014\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/books",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "books [400]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.expect(pm.response.code).to.equal(400);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Error message indicates the invalid field\", function () {",
+									"    pm.expect(responseJson.author).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"All the Semi Bright Places\",\n    \"author\": \"\",\n    \"yearOfRelease\": 2014\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/books",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bookById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Updated resource is the same as sent resource\", function () {",
+									"    pm.expect(responseJson.title).to.equal(JSON.parse(pm.request.body).title);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"All the Bright Places\",\n    \"author\": \"Jennifer Niven\",\n    \"yearOfRelease\": 2015\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/books/{{newItemId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"books",
+								"{{newItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bookById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.expect(pm.response.code).to.equal(204);",
+									"});",
+									"",
+									"pm.sendRequest(pm.collectionVariables.get(\"baseUrl\") + \"/books/\" + pm.collectionVariables.get(\"newItemId\"), function (err, response) {",
+									"    pm.test(\"Resource is not found\", function () {",
+									"        pm.expect(response.code).to.equal(404);",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/books/{{newItemId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"books",
+								"{{newItemId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ratings",
+			"item": [
+				{
+					"name": "ratings",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Response array has at least length of 1\", function () {",
+									"    pm.expect(responseJson).to.have.length.at.least(1);",
+									"    pm.collectionVariables.set(\"exampleId\", responseJson.at(0).id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/ratings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ratings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ratingById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Response object id equals id sent in the url\", function () {",
+									"    pm.expect(responseJson.id).to.equal(pm.collectionVariables.get(\"exampleId\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/ratings/{{exampleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ratings",
+								"{{exampleId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ratings",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.expect(pm.response.code).to.equal(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Created resource is the same as sent resource\", function () {",
+									"    pm.expect(responseJson.username).to.equal(JSON.parse(pm.request.body).username);",
+									"    pm.collectionVariables.set(\"newItemId\", responseJson.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"stars\": 4.5,\n    \"userId\": {{userId}},\n    \"bookId\": {{bookId}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/ratings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ratings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ratings [400]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.expect(pm.response.code).to.equal(400);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Error message indicates the invalid field\", function () {",
+									"    pm.expect(responseJson.userId).to.exist;",
+									"    pm.expect(responseJson.bookId).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"stars\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/ratings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ratings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ratingById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Updated resource is the same as sent resource\", function () {",
+									"    pm.expect(responseJson.stars).to.equal(JSON.parse(pm.request.body).stars);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"stars\": 4,\n    \"userId\": {{userId}},\n    \"bookId\": {{bookId}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/ratings/{{newItemId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ratings",
+								"{{newItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ratingById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.expect(pm.response.code).to.equal(204);",
+									"});",
+									"",
+									"pm.sendRequest(pm.collectionVariables.get(\"baseUrl\") + \"/ratings/\" + pm.collectionVariables.get(\"newItemId\"), function (err, response) {",
+									"    pm.test(\"Resource is not found\", function () {",
+									"        pm.expect(response.code).to.equal(404);",
+									"    });",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/ratings/{{newItemId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ratings",
+								"{{newItemId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "comments",
+			"item": [
+				{
+					"name": "comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Response array has at least length of 1\", function () {",
+									"    pm.expect(responseJson).to.have.length.at.least(1);",
+									"    pm.collectionVariables.set(\"exampleId\", responseJson.at(0).id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "commentById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Response object id equals id sent in the url\", function () {",
+									"    pm.expect(responseJson.id).to.equal(pm.collectionVariables.get(\"exampleId\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{exampleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{exampleId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.expect(pm.response.code).to.equal(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Created resource is the same as sent resource\", function () {",
+									"    pm.expect(responseJson.content).to.equal(JSON.parse(pm.request.body).content);",
+									"    pm.collectionVariables.set(\"newItemId\", responseJson.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\": \"I recommend this book to everyone. It's a real game changer!\",\n    \"userId\": {{userId}},\n    \"bookId\": {{bookId}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "comments [400]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.expect(pm.response.code).to.equal(400);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Error message indicates the invalid field\", function () {",
+									"    pm.expect(responseJson.bookId).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\": \"I recommend this book to everyone. It's a real game changer!\",\n    \"userId\": {{userId}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "commentById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Updated resource is the same as sent resource\", function () {",
+									"    pm.expect(responseJson.content).to.equal(JSON.parse(pm.request.body).content);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\": \"I'd recommend this book to anyone. It's a real life changer!\",\n    \"userId\": {{userId}},\n    \"bookId\": {{bookId}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{newItemId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{newItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "commentById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.expect(pm.response.code).to.equal(204);",
+									"});",
+									"",
+									"pm.sendRequest(pm.collectionVariables.get(\"baseUrl\") + \"/comments/\" + pm.collectionVariables.get(\"newItemId\"), function (err, response) {",
+									"    pm.test(\"Resource is not found\", function () {",
+									"        pm.expect(response.code).to.equal(404);",
+									"    });",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{newItemId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{newItemId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "bookshelves",
+			"item": [
+				{
+					"name": "bookshelves",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Response array has at least length of 1\", function () {",
+									"    pm.expect(responseJson).to.have.length.at.least(1);",
+									"    pm.collectionVariables.set(\"bookshelfId\", responseJson.at(0).id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/bookshelves",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookshelves"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bookshelfById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Response object id equals id sent in the url\", function () {",
+									"    pm.expect(responseJson.id).to.equal(pm.collectionVariables.get(\"bookshelfId\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/bookshelves/{{bookshelfId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookshelves",
+								"{{bookshelfId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bookshelves",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.expect(pm.response.code).to.equal(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Created resource is the same as sent resource\", function () {",
+									"    pm.expect(responseJson.name).to.equal(JSON.parse(pm.request.body).name);",
+									"    pm.collectionVariables.set(\"newItemId\", responseJson.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Fantasy\",\n    \"userId\": {{userId}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bookshelves",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookshelves"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bookshelves [400]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.expect(pm.response.code).to.equal(400);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Error message indicates the invalid field\", function () {",
+									"    pm.expect(responseJson.name).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \" \",\n    \"userId\": {{userId}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bookshelves",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookshelves"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bookshelfById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Updated resource is the same as sent resource\", function () {",
+									"    pm.expect(responseJson.name).to.equal(JSON.parse(pm.request.body).name);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Action\",\n    \"userId\": {{userId}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bookshelves/{{newItemId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookshelves",
+								"{{newItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bookshelfById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.expect(pm.response.code).to.equal(204);",
+									"});",
+									"",
+									"pm.sendRequest(pm.collectionVariables.get(\"baseUrl\") + \"/bookshelves/\" + pm.collectionVariables.get(\"newItemId\"), function (err, response) {",
+									"    pm.test(\"Resource is not found\", function () {",
+									"        pm.expect(response.code).to.equal(404);",
+									"    });",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/bookshelves/{{newItemId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookshelves",
+								"{{newItemId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "book - bookshelf",
+			"item": [
+				{
+					"name": "add book to bookshelf",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.equal(200);",
+									"    pm.response.to.be.withBody;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/bookshelves/{{bookshelfId}}/books/{{bookId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookshelves",
+								"{{bookshelfId}}",
+								"books",
+								"{{bookId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "books on bookshelf",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Response array has at least length of 1\", function () {",
+									"    pm.expect(responseJson).to.have.length.at.least(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/bookshelves/{{bookshelfId}}/books",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookshelves",
+								"{{bookshelfId}}",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete book from bookshelf",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.expect(pm.response.code).to.equal(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/bookshelves/{{bookshelfId}}/books/{{bookId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookshelves",
+								"{{bookshelfId}}",
+								"books",
+								"{{bookId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "search",
+			"item": [
+				{
+					"name": "adult users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Response array contains only adult users\", function () {",
+									"    pm.expect(responseJson.every(user => user.adult)).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users?search=adult:true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "adult:true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "non-adult users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Response array contains only non-adult users\", function () {",
+									"    pm.expect(responseJson.every(user => !user.adult)).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users?search=adult:false",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "adult:false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "books released after 2000",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Response array contains only books released after year 2000\", function () {",
+									"    pm.expect(responseJson.every(book => book.yearOfRelease > 2000)).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/books?search=yearOfRelease>2000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"books"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "yearOfRelease>2000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "books search with 2 filters",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Response array contains only books released before year 2000 and where author has an 'ar' in the name\", function () {",
+									"    pm.expect(responseJson.every(book => book.yearOfRelease < 2000 && book.author.toLowerCase().includes('ar'))).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/books?search=yearOfRelease<2000,author:ar",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"books"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "yearOfRelease<2000,author:ar"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "books with 'the' in title",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Response array contains only books with 'the' in the title\", function () {",
+									"    pm.expect(responseJson.every(book => book.title.toLowerCase().includes('the'))).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/books?search=title:the",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"books"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "title:the"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "localhost:8081/api",
+			"type": "string"
+		},
+		{
+			"key": "exampleId",
+			"value": ""
+		},
+		{
+			"key": "newItemId",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"key": "bookId",
+			"value": ""
+		},
+		{
+			"key": "bookshelfId",
+			"value": ""
+		}
+	]
+}
