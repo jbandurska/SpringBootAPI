@@ -78,4 +78,11 @@ public class BookshelfService {
                 .orElseThrow(() -> new EntityNotFoundException("Bookshelf with id " + bookshelfId + " not found."));
     }
 
+    public void deleteBookshelf(Long id) {
+        if (id == null)
+            throw new NullException("Bookshelf id cannot be null");
+
+        bookshelfRepository.deleteById(id);
+    }
+
 }

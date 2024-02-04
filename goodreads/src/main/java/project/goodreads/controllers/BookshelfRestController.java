@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import project.goodreads.dto.BookWithIdDto;
 import project.goodreads.dto.BookshelfDto;
 import project.goodreads.dto.BookshelfWithIdDto;
+import project.goodreads.models.Book;
 import project.goodreads.models.Bookshelf;
 import project.goodreads.repositories.BookshelfRepository;
 import project.goodreads.services.BookshelfService;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/bookshelves")
@@ -69,6 +72,19 @@ public class BookshelfRestController {
         return ResponseEntity.ok(bookshelfDto);
     }
 
+    @GetMapping("/{bookshelfId}/books")
+    public ResponseEntity<List<BookWithIdDto>> getAllBooksOnBookshelf(@PathVariable Long bookshelfId) {
+
+        Bookshelf bookshelf = bookshelfService.getBookshelf(bookshelfId);
+
+        Set<Book> books = bookshelf.getBooks();
+        List<BookWithIdDto> bookDtos = books.stream()
+                .map(b -> Book.toBookWithIdDto(b))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(bookDtos);
+    }
+
     @PostMapping
     public ResponseEntity<BookshelfWithIdDto> createBookshelfForUser(@Valid @RequestBody BookshelfDto bookshelfDto) {
 
@@ -101,6 +117,14 @@ public class BookshelfRestController {
     public ResponseEntity<Void> deleteBookFromBookshelf(@PathVariable Long bookshelfId, @PathVariable Long bookId) {
 
         bookshelfService.deleteBookFromBookshelf(bookshelfId, bookId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteOne(@PathVariable Long id) {
+
+        bookshelfService.deleteBookshelf(id);
 
         return ResponseEntity.noContent().build();
     }
